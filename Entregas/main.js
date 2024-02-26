@@ -12,7 +12,7 @@ class Product {
             const data = fs.readFileSync(this.path, 'utf8');
             this.products = JSON.parse(data);
         } catch (error) {
-            console.error(`Error : ${error.message}`);
+            console.error(`Error: ${error.message}`);
         }
     }
 
@@ -21,11 +21,14 @@ class Product {
             const data = JSON.stringify(this.products, null, 2);
             fs.writeFileSync(this.path, data);
         } catch (error) {
-            console.error(`Error : ${error.message}`);
+            console.error(`Error: ${error.message}`);
         }
     }
 
-    static id = 0;
+    getNextId() {
+        const maxId = this.products.reduce((max, product) => Math.max(max, product.id), 0);
+        return maxId + 1;
+    }
 
     agregarProduct(newProduct) {
         const { code } = newProduct;
@@ -35,8 +38,8 @@ class Product {
             return;
         }
 
-        Product.id++;
-        this.products.push({ ...newProduct, id: Product.id });
+        const newId = this.getNextId();
+        this.products.push({ ...newProduct, id: newId });
         this.saveProducts();
     }
 
@@ -54,26 +57,26 @@ class Product {
     }
 
     updateProduct(id, field, value) {
-        const productIndex = this.products.findIndex((product) => product.id === id);
+        const product = this.products.find((product) => product.id === id);
 
-        if (productIndex === -1) {
+        if (!product) {
             console.log('Producto no encontrado.');
             return;
         }
 
-        this.products[productIndex][field] = value;
+        product[field] = value;
         this.saveProducts();
     }
 
     deleteProduct(id) {
-        const updatedProducts = this.products.filter((product) => product.id !== id);
+        const index = this.products.findIndex((product) => product.id === id);
 
-        if (updatedProducts.length === this.products.length) {
+        if (index === -1) {
             console.log('Producto no encontrado.');
             return;
         }
 
-        this.products = updatedProducts;
+        this.products.splice(index, 1);
         this.saveProducts();
     }
 }
