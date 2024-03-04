@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-class Product {
+export class Product {
     constructor(filePath) {
         this.products = [];
         this.path = filePath;
@@ -33,7 +33,7 @@ class Product {
     agregarProduct(newProduct) {
         const { code } = newProduct;
 
-        if (this.products.some((product) => product.code === code)) {
+        if (this.products.find((product) => product.code === code)) {
             console.log(`El código ${code} está repetido.`);
             return;
         }
